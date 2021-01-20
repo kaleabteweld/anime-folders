@@ -1,0 +1,27 @@
+{
+  "name": "anime_folder",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "form-data": "^3.0.0",
+    "image-to-icon-converter": "^1.0.1",
+    "jimp": "^0.16.1",
+    "node-fetch": "^2.6.1",
+    "nodemon": "^2.0.7",
+    "open": "^7.3.1",
+    "pkce-challenge": "^2.1.0",
+    "png-to-ico": "^2.1.1",
+    "qs": "^6.9.6",
+    "request": "^2.88.2",
+    "resize-png-buffer": "^1.0.1",
+    "to-ico": "^1.1.5"
+  }
+}
