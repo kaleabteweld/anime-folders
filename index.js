@@ -42,6 +42,18 @@ function desktop_ini(pic_file) {
   const dir = pic_file.split(name)[0];
   const temp = dir + name + ".ico";
 
+  exec(`custom_folder_icon.bat "${dir}" "${temp}"`, (error, stdout, stderr) => {
+    if (error) {
+      console.log(`error: ${error.message}`);
+      //return;
+    }
+    if (stderr) {
+      //console.log(`stderr: ${stderr}`);
+      //return;
+    }
+    console.log(`stdout: ${stdout}`);
+  });
+
   const data = `[.ShellClassInfo]
 IconFile=${name}.ico
 IconIndex=0
@@ -59,29 +71,29 @@ IconResource=${name}.ico,0
   //   }
   //   //console.log(`stdout: ${stdout}`);
   // });
-  fs.writeFileSync(`${dir}\desktop.ini`, data);
-  exec(`attrib +S +H ${dir}\desktop.ini`, (error, stdout, stderr) => {
-    if (error) {
-      console.log(`error: ${error.message}`);
-      //return;
-    }
-    if (stderr) {
-      //console.log(`stderr: ${stderr}`);
-      //return;
-    }
-    //console.log(`stdout: ${stdout}`);
-  });
-  exec(`attrib +R ${dir}`, (error, stdout, stderr) => {
-    if (error) {
-      console.log(`error: ${error.message}`);
-      //return;
-    }
-    if (stderr) {
-      //console.log(`stderr: ${stderr}`);
-      //return;
-    }
-    //console.log(`stdout: ${stdout}`);
-  });
+  // fs.writeFileSync(`${dir}\desktop.ini`, data);
+  // exec(`attrib +S +H ${dir}\desktop.ini`, (error, stdout, stderr) => {
+  //   if (error) {
+  //     console.log(`error: ${error.message}`);
+  //     //return;
+  //   }
+  //   if (stderr) {
+  //     //console.log(`stderr: ${stderr}`);
+  //     //return;
+  //   }
+  //   //console.log(`stdout: ${stdout}`);
+  // });
+  // exec(`attrib +R ${dir}`, (error, stdout, stderr) => {
+  //   if (error) {
+  //     console.log(`error: ${error.message}`);
+  //     //return;
+  //   }
+  //   if (stderr) {
+  //     //console.log(`stderr: ${stderr}`);
+  //     //return;
+  //   }
+  //   //console.log(`stdout: ${stdout}`);
+  // });
   console.log("[+] done with desktop.ini for " + name);
 }
 
