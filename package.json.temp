@@ -1,17 +1,26 @@
 {
-  "name": "anime_folder",
+  "name": "@pain_lord/anime_folder",
   "version": "1.0.0",
-  "description": "a cil for make anime contening folders have the animes icon",
+  "description": "a cil for make anime folder icon",
   "main": "index.js",
+  "bin": {
+    "@pain_lord/anime_folder": "bin/create-project",
+    "create-project": "bin/create-project"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "kaleab Teweldbrhan abay",
+  "keywords": [
+    "cli",
+    "create-project"
+  ],
+  "author": "kaleab teweldbrhan abay(kolo,pain)",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.1",
-    "esm": "^3.2.25",
     "image-to-icon-converter": "^1.0.1",
     "jimp": "^0.16.1",
     "nodemon": "^2.0.7",

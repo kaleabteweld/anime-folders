@@ -1,222 +1,65 @@
-const open = require("open");
-const pkceChallenge = require("pkce-challenge");
-const http = require("http");
-const axios = require("axios").default;
-const qs = require("qs");
 const fs = require("fs");
-const ico = require("./temp");
 const path = require("path");
-const { exec } = require("child_process");
 
-const { readdirSync, statSync } = require("fs");
-const { join } = require("path");
-const { url } = require("inspector");
+// cus modules
+const myAnimeList_init = require("./modules/myAnimeList/init");
+const get_anime_list = require("./modules/get_anime_list");
+const get_anime_data = require("./modules/myAnimeList/get_anime_data");
+const download = require("./modules/download");
+const ico = require("./modules/to_ico_re_size");
+const set_folder_icon = require("./modules/set_folder_icon");
 
-const dirs = (p) =>
-  readdirSync(p).filter((f) => statSync(join(p, f)).isDirectory());
-
-async function download(uri, filename) {
-  console.log("[+] downloading....[" + uri + "]");
-  console.log("[+] and writeing to [" + filename + "]");
-
-  const res = await axios({
-    method: "GET",
-    url: uri,
-    responseType: "stream",
-  });
-
-  res.data.pipe(fs.createWriteStream(filename));
-  return new Promise((resovle, reject) => {
-    res.data.on("end", () => {
-      resovle(0);
-    });
-
-    res.data.on("error", (err) => {
-      reject(err);
-    });
-  });
+// vars
+const home_folder = process.argv[2];
+if (!home_folder) {
+  console.log("[-] enter folder eg. anime-folder c:\\....myanimes");
+  process.exit(1);
 }
 
-function desktop_ini(pic_file) {
-  const name = path.basename(pic_file).split(".").slice(0, -1).join(".");
-  const dir = pic_file.split(name)[0];
-  const temp = dir + name + ".ico";
+var api_key;
+var user_anime_list;
+var anime_data;
+var anime_pic;
 
-  exec(`custom_folder_icon.bat "${dir}" "${temp}"`, (error, stdout, stderr) => {
-    if (error) {
-      console.log(`error: ${error.message}`);
-      //return;
-    }
-    if (stderr) {
-      //console.log(`stderr: ${stderr}`);
-      //return;
-    }
-    console.log(`stdout: ${stdout}`);
-  });
+async function start() {
+  try {
+    api_key = await myAnimeList_init();
+    user_anime_list = get_anime_list(home_folder);
 
-  const data = `[.ShellClassInfo]
-IconFile=${name}.ico
-IconIndex=0
-ConfirmFileOp=0
-IconResource=${name}.ico,0
-`;
-  // exec(`attrib -h -r ${dir}\desktop.ini`, (error, stdout, stderr) => {
-  //   if (error) {
-  //     console.log(`error: ${error.message}`);
-  //     //return;
-  //   }
-  //   if (stderr) {
-  //     //console.log(`stderr: ${stderr}`);
-  //     //return;
-  //   }
-  //   //console.log(`stdout: ${stdout}`);
-  // });
-  // fs.writeFileSync(`${dir}\desktop.ini`, data);
-  // exec(`attrib +S +H ${dir}\desktop.ini`, (error, stdout, stderr) => {
-  //   if (error) {
-  //     console.log(`error: ${error.message}`);
-  //     //return;
-  //   }
-  //   if (stderr) {
-  //     //console.log(`stderr: ${stderr}`);
-  //     //return;
-  //   }
-  //   //console.log(`stdout: ${stdout}`);
-  // });
-  // exec(`attrib +R ${dir}`, (error, stdout, stderr) => {
-  //   if (error) {
-  //     console.log(`error: ${error.message}`);
-  //     //return;
-  //   }
-  //   if (stderr) {
-  //     //console.log(`stderr: ${stderr}`);
-  //     //return;
-  //   }
-  //   //console.log(`stdout: ${stdout}`);
-  // });
-  console.log("[+] done with desktop.ini for " + name);
-}
+    user_anime_list.forEach(async (anime) => {
+      anime_data = await get_anime_data(api_key, anime);
+      anime_pic_url = anime_data.main_picture.large;
+      var download_ = await download(anime_pic_url, home_folder, anime);
 
-function start(access_token, home_folder = process.argv[2]) {
-  //console.log(dirs(home_folder));
-  dirs(home_folder).forEach((element) => {
-    console.log(element);
-    axios
-      .get(`https://api.myanimelist.net/v2/anime?q=${element}`, {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-      })
-      .then((res) => {
-        data = res.data.data[0].node;
-        //console.log(data);
-        if (data != undefined) {
-          console.log("ok for " + element);
-
-          const file =
-            home_folder +
-            "\\" +
-            element +
-            "\\" +
-            data.main_picture.large.split("/")[
-              data.main_picture.large.split("/").length - 1
-            ];
-
-          download(data.main_picture.large, file)
-            .then(() => {
-              console.log("[+] done downloding for " + element);
-              ico(file);
-              desktop_ini(file);
-            })
-            .catch((err) => {
-              console.log(err);
-            });
+      if (download_.ok == 1) {
+        console.log(`[+] downloading done for ${anime} poster`);
+        var ico_ = await ico(download_.file);
+        if (ico_.ok == 1) {
+          console.log("[+] done makeing icon for " + anime);
+          set_folder_icon(ico_.file, anime);
         } else {
-          console.log("can not find anime");
+          console.log("[-] can not makeing icon for " + anime);
         }
-      })
-      .catch((error) => {
-        console.log("error while finding " + element);
-        console.log(error);
-      });
-  });
+      } else {
+        console.log(`[-] can not downloading done for ${anime} poster`);
+      }
+
+      // console.log("[+] done");
+      // process.exit(1);
+    });
+  } catch (error) {
+    console.log(error);
+  }
 }
 
-const code_verifier = pkceChallenge()["code_verifier"];
-const code_challenge = pkceChallenge()["code_challenge"];
-const client_id = "8e19f1bdd74b9844b0430147618e5175";
-const client_secret =
-  "18b3a196766b93821a1d0bb2de2633178015eea80096e858fb95f71b0f999286";
-code = "";
-access_token = "";
-const grant_type = "authorization_code";
-const state = "YOUR_STATE";
-const response_type = "code";
+start();
 
-// start sever
-var server = http.createServer(function (req, res) {
-  //console.log(req.url);
-  if (req.url.split("?")[0] == "/anime") {
-    //console.log("ok");
-
-    try {
-      // get access to URLSearchParams object
-      // new URL object
-      const current_url = new URL("http://" + req.headers.host + req.url);
-
-      const search_params = current_url.searchParams;
-      code = search_params.get("code");
-      //console.log(code);
-      //console.log(code_challenge);
-
-      // get user's access token
-      axios
-        .post(
-          " https://myanimelist.net/v1/oauth2/token",
-
-          qs.stringify({
-            client_id,
-            client_secret,
-            code,
-            code_verifier: code_challenge,
-            grant_type,
-          }),
-          {
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
-            },
-          }
-        )
-        .then(function (response) {
-          // handle success
-          console.log("access_token ok");
-          //console.log(response.data);
-          access_token = response.data.access_token;
-          start(access_token);
-        })
-        .catch(function (error) {
-          // handle error
-          console.log(error);
-          //console.log("error");
-        });
-
-      res.writeHead(200, { "Content-Type": "text/html" });
-      res.write("<html><body><p>ok</p></body></html>");
-      res.end();
-    } catch (error) {
-      console.log(error);
-      res.writeHead(400, { "Content-Type": "text/html" });
-      res.write("<html><body><p>error</p></body></html>");
-      res.end();
-    }
-  }
-});
-server.listen(3000);
-console.log("Node.js web server at port 3000 is running..");
-
-//Opens the URL in the default browser.
-const open_url = `https://myanimelist.net/v1/oauth2/authorize?response_type=${response_type}&client_id=${client_id}&code_challenge=${code_challenge}&state=${state}`;
-// console.log(open_url);
-open(open_url, { wait: true }).finally(() => {
-  console.log("ok");
-});
+// download(data.main_picture.large, anime_name, file)
+//   .then(() => {
+//     console.log("[+] done downloding for " + anime_name);
+//     ico(file);
+//     desktop_ini(file);
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
