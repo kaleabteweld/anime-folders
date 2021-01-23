@@ -1,6 +1,6 @@
 {
   "name": "anime_folder",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "a cil for make anime contening folders have the animes icon",
   "main": "index.js",
   "scripts": {

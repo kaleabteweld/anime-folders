@@ -26,6 +26,8 @@ async function start() {
     api_key = await myAnimeList_init();
     user_anime_list = get_anime_list(home_folder);
 
+    var conter = 0;
+    var error_conter = 0;
     user_anime_list.forEach(async (anime) => {
       anime_data = await get_anime_data(api_key, anime);
       anime_pic_url = anime_data.main_picture.large;
@@ -36,16 +38,23 @@ async function start() {
         var ico_ = await ico(download_.file);
         if (ico_.ok == 1) {
           console.log("[+] done makeing icon for " + anime);
-          set_folder_icon(ico_.file, anime);
+          let por_id = set_folder_icon(ico_.file, anime, conter);
+          conter++;
+          if (por_id == user_anime_list.length - 1) {
+            console.log(
+              `\n\n\n[x] finshed with <${
+                user_anime_list.length - 1 - error_conter
+              }/${user_anime_list.length - 1}>`
+            );
+            process.exit(1);
+          }
         } else {
           console.log("[-] can not makeing icon for " + anime);
         }
       } else {
         console.log(`[-] can not downloading done for ${anime} poster`);
+        error_conter++;
       }
-
-      // console.log("[+] done");
-      // process.exit(1);
     });
   } catch (error) {
     console.log(error);
