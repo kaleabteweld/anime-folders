@@ -1,7 +1,7 @@
 {
   "name": "anime_folder",
   "version": "1.0.1",
-  "description": "a cil for make anime contening folders have the animes icon",
+  "description": "A Command line tool for making anime containing folders have their respective anime folder icons.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
