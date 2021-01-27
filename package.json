@@ -1,12 +1,14 @@
 {
   "name": "anime_folder",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "description": "a cil for make anime contening folders have the animes icon",
   "main": "index.js",
+  "bin": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
-  "keywords": [],
+  "keywords": ["anime","folder","anime-folder"],
   "author": "kaleab Teweldbrhan abay",
   "license": "ISC",
   "dependencies": {
@@ -20,5 +22,13 @@
     "png-to-ico": "^2.1.1",
     "qs": "^6.9.6",
     "resize-png-buffer": "^1.0.1"
-  }
+  },
+  "repository": {
+    "type":"git",
+    "url": "git+https://github.com/kaleabteweld/anime-folders.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kaleabteweld/anime-folders/issues"
+  },
+  "homepage": "https://github.com/kaleabteweld/anime-folders/blob/main/README.md"
 }

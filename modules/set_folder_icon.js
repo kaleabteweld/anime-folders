@@ -6,7 +6,8 @@ const { rejects } = require("assert");
 async function set_icon(pic_file, anime_name, conter) {
   const name = path.basename(pic_file).split(".").slice(0, -1).join(".");
   var dir = pic_file.split(name)[0];
-  const temp = dir + name + ".ico";
+  //const temp = dir + name + ".ico";
+  const temp = name + ".ico";
   dir = dir.slice(0, dir.length - 1);
 
   // get cur dir
