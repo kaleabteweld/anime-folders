@@ -8,7 +8,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
   },
-  "keywords": ["anime","folder","anime-folder"],
+  "keywords": [
+    "anime",
+    "folder",
+    "anime-folder"
+  ],
   "author": "kaleab Teweldbrhan abay",
   "license": "ISC",
   "dependencies": {
@@ -24,7 +28,7 @@
     "resize-png-buffer": "^1.0.1"
   },
   "repository": {
-    "type":"git",
+    "type": "git",
     "url": "git+https://github.com/kaleabteweld/anime-folders.git"
   },
   "bugs": {

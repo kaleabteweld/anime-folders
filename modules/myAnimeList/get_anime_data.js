@@ -19,10 +19,11 @@ async function get_data(access_token, anime_name) {
           console.log("[-] Can not find anime with the name " + anime_name);
           reject("404");
         }
+        conter++;
       })
       .catch((error) => {
         console.log("[-] error while finding..... " + anime_name);
-        console.log(`https://api.myanimelist.net/v2/anime?q="${anime_name}"`);
+        //console.log(`https://api.myanimelist.net/v2/anime?q="${anime_name}"`);
         reject(error);
       });
   });

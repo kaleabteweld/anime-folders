@@ -15,7 +15,7 @@ async function set_icon(pic_file, anime_name, conter) {
   pwd = path.basename(pwd_).split(".").slice(0, -1).join(".");
   pwd = pwd_.split(pwd)[0];
 
-  console.log(`${pwd}custom_folder_icon.bat "${dir}" "${temp}"`);
+  //console.log(`${pwd}custom_folder_icon.bat "${dir}" "${temp}"`);
   return new Promise((resolve, reject) => {
     exec(
       `${pwd}custom_folder_icon.bat "${dir}" "${temp}"`,
